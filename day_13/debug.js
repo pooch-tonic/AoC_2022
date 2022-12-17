@@ -6,6 +6,7 @@ const {
   debugInput3,
 } = require("./input");
 
+// working code from Reddit used to generate debug test cases
 const compare = ([left, right]) => {
   if ([left, right].every(Number.isInteger)) {
     if (left < right) return true;
