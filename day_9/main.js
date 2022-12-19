@@ -1,4 +1,4 @@
-const { input, testInput } = require("./input");
+const { input, testInput, logNoe } = require("./input");
 
 const directions = {
   U: { x: 0, y: 1 },
@@ -29,6 +29,7 @@ const updateKnotPosition = (previousKnot, currentKnot) => {
 const calculateTailPath = (instructions) => {
   const tailLogs = {};
   instructions.forEach((instruction) => {
+    console.log(">>", instruction);
     const [direction, steps] = instruction.split(" ");
     const velocity = directions[direction];
     for (let step = 0; step < steps; step++) {
@@ -39,9 +40,22 @@ const calculateTailPath = (instructions) => {
       });
       const lastKnot = knots[knots.length - 1];
       tailLogs[`${lastKnot.x}:${lastKnot.y}`] = true;
+      /*console.log("  >> Step", step);
+      console.log("    >> Knot 0 [" + knots[0].x + ", " + knots[0].y + "]");
+      console.log("    >> Knot 1 [" + knots[1].x + ", " + knots[1].y + "]");
+      console.log("    >> Knot 2 [" + knots[2].x + ", " + knots[2].y + "]");*/
     }
   });
+
   console.log(Object.keys(tailLogs).length);
+  const parsedLogNoe = logNoe.replaceAll(",", ":").split("\n");
+  console.log(
+    Object.keys(tailLogs).filter((key) => {
+      const invertedYKey = key.split(":");
+      invertedYKey[1] = -parseInt(invertedYKey[1]);
+      return !parsedLogNoe.includes(`${invertedYKey[0]}:${invertedYKey[1]}`);
+    })
+  );
 };
 
 const getTailPathFromInput = (input) => {
