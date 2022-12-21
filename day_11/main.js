@@ -96,4 +96,4 @@ const getMonkeyBusinessLevel = (rounds, input) => {
     .reduce((acc, val) => acc * val);
 };
 
-console.log(getMonkeyBusinessLevel(20, testInput));
+console.log(getMonkeyBusinessLevel(1, testInput));

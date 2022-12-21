@@ -35,8 +35,14 @@ const createGraph = (input) => {
 
 const explore = (track, shortestPathObj, node) => {
   track.push(node);
+  let path = "";
+  track.forEach((c) => (path += String.fromCharCode(c.height)));
+  process.stdout.write(
+    path +
+      "                                                                                                               \r"
+  );
   if (node.end) {
-    console.log(track.map((t) => t.id));
+    // console.log(track.map((t) => t.id));
     if (
       shortestPathObj.steps === 0 ||
       track.length < shortestPathObj.path.length
