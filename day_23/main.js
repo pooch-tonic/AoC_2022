@@ -1,5 +1,5 @@
 const util = require("util");
-const { input, testInput } = require("./input");
+const { input, testInput, testInput2 } = require("./input");
 
 const directions = {
   N: { x: 0, y: 1 },
@@ -30,6 +30,7 @@ class Elf {
 
   checkAround() {
     let canMove = true;
+    this.destCoord = null;
     const neighbors = this.elves.filter(
       (elf) =>
         elf.id !== this.id &&
@@ -41,8 +42,8 @@ class Elf {
       let chosenDirection;
       for (let i = 0; i < len; i++) {
         const currentIndex = (this.checkIndex + i) % len;
-        const isSideEmpty = checkOrder[currentIndex].every((orthDir) =>
-          neighbors.every((neighbor) => {
+        const isSideEmpty = checkOrder[currentIndex].every((orthDir) => {
+          const isNotOccupied = neighbors.every((neighbor) => {
             if (
               neighbor.x === this.x + directions[orthDir].x &&
               neighbor.y === this.y + directions[orthDir].y
@@ -50,12 +51,14 @@ class Elf {
               return false;
             }
             return true;
-          })
-        );
+          });
+          return isNotOccupied;
+        });
         if (isSideEmpty) {
           chosenDirection = directions[checkOrder[currentIndex][0]];
           break;
         }
+        // console.log(" ", checkOrder[currentIndex], isSideEmpty);
       }
       if (chosenDirection) {
         this.destCoord = {
@@ -64,11 +67,9 @@ class Elf {
         };
       } else {
         canMove = false;
-        this.destCoord = null;
       }
     } else {
       canMove = false;
-      this.destCoord = null;
     }
     this.checkIndex = (this.checkIndex + 1) % len;
     // console.log("  canMove", canMove);
@@ -85,14 +86,11 @@ class Elf {
             elf.destCoord.x === this.destCoord.x &&
             elf.destCoord.y === this.destCoord.y
         );
-      // console.log(!!dupeDestElf);
       if (!dupeDestElf) {
         this.x = this.destCoord.x;
         this.y = this.destCoord.y;
-        this.destCoord = null;
         return true;
       }
-      this.destCoord = null;
       return false;
     }
     return false;
@@ -109,6 +107,14 @@ const parseElves = (input) => {
     line.split("").forEach((char, x) => {
       if (char === "#") {
         elves.push(new Elf({ id: `${x}-${y}`, x, y: -y, elves }));
+        /*elves.push(
+          new Elf({
+            id: `${String.fromCharCode(65 + elves.length)}`,
+            x,
+            y: -y,
+            elves,
+          })
+        );*/
       }
     });
   });
@@ -159,6 +165,7 @@ const render = (elves) => {
     for (let x = minX; x <= maxX; x++) {
       if (elves.some((elf) => elf.isPosition({ x, y }))) {
         line = line.concat("#");
+        // line = line.concat(elves.find((elf) => elf.isPosition({ x, y })).id);
       } else {
         line = line.concat(".");
       }
@@ -185,7 +192,7 @@ const calculateEmptyGroundTiles = (input, rounds) => {
   return Math.abs(maxX - minX) * Math.abs(maxY - minY);
 };
 
-console.log(calculateEmptyGroundTiles(testInput, 10));
+console.log(calculateEmptyGroundTiles(input, 10));
 
 // use this line for in-depth debugging
 // console.log(util.inspect(myObject, {showHidden: false, depth: null, colors: true}))
