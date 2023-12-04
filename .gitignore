@@ -1,0 +1,3 @@
+# ignore input files
+**/input.js
+!_template/**
